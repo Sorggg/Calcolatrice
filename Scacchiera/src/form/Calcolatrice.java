@@ -163,7 +163,7 @@ public class Calcolatrice {
         if (stack.size() == 1) {
             return stack.pop();
         } else {
-            return "Errore: espressione non valida mannaggia";
+            return "Errore: espressione non valida";
         }
     }
 
