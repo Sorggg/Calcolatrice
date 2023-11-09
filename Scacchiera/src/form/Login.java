@@ -4,42 +4,70 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Objects;
+
 
 public class Login {
     private JButton submit;
     private JPanel loginPanel;
-    private JTextField username;
+    private JTextField usernameText;
     private JLabel userNameLabel;
-    private JTextField password;
+    private JTextField passwordText;
     private JLabel passwordLabel;
     static Connection conn1 = null;
+    JFrame jFrame = new JFrame();
 
     public Login() {
         submit.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent event) {
                 String strSelect = "select * from Users";
 
-                Statement stmt = null;
-                try {
-                    stmt = conn1.createStatement();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    ResultSet rset = stmt.executeQuery(strSelect);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                if(1==2){
+                ArrayList<Integer> id = new ArrayList<>();
+                ArrayList<String> username = new ArrayList<>();
+                ArrayList<String> password = new ArrayList<>();
+                try{
+                    Statement stmt = conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    ResultSet rs = stmt.executeQuery("select * from Users");
+                    int i= 0;
 
+                    while(rs.next()){
+                        id.add(rs.getInt("Id"));
+                        username.add(rs.getString("Username"));
+                        password.add(rs.getString("Password"));
+                        i++;
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                if(verifica(usernameText.getText(),passwordText.getText(),id,username,password) > -1){
+                    System.out.println(verifica(usernameText.getText(),passwordText.getText(),id,username,password));
+                    JOptionPane.showMessageDialog(null, "Login effettuato con successo");
+                    JFrame frame = new JFrame("Calcolatrice");
+                    frame.setContentPane(new Calcolatrice().panel1);
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    frame.pack();
+                    frame.setVisible(true);
                 }
                 else{
-                    JFrame jFrame = new JFrame();
                     JOptionPane.showMessageDialog(jFrame, "Username o password sbagliati");
                 }
             }
         });
+    }
+    public int verifica(String u,String p,ArrayList<Integer> Id,ArrayList<String> Username,ArrayList<String>Password){
+        boolean found = false;
+        int ris = -1;
+        int i = 0;
+        while (!found && i < Id.size()){
+            if(Objects.equals(Username.get(i), u) && Objects.equals(Password.get(i), p)){
+                found = true;
+                ris = Id.get(i);
+            }
+            i++;
+        }
+        return ris;
     }
 
     public static void main(String[] args) {

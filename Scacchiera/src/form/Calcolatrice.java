@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class Calcolatrice {
     private boolean RPN = false;
-    private JPanel panel1;
+    public JPanel panel1;
     private JButton division;
     private JButton multiplication;
     private JButton minus;

@@ -19,7 +19,7 @@
           <text value="Enter"/>
         </properties>
       </component>
-      <component id="9d0b" class="javax.swing.JTextField" binding="username">
+      <component id="9d0b" class="javax.swing.JTextField" binding="usernameText">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -39,7 +39,7 @@
           <text value="Username"/>
         </properties>
       </component>
-      <component id="b246c" class="javax.swing.JTextField" binding="password">
+      <component id="b246c" class="javax.swing.JTextField" binding="passwordText">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
