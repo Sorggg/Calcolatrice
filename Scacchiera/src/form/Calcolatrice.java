@@ -2,8 +2,6 @@ package form;
 
 import javax.swing.*;
 import java.util.Stack;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Calcolatrice {
     private boolean RPN = false;
@@ -25,126 +23,47 @@ public class Calcolatrice {
     private JButton eight;
     private JButton nine;
     private JTextField screen;
+    private JButton history;
 
     public Calcolatrice() {
 
 
-        seven.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "7");
+        seven.addActionListener(e -> screen.setText(screen.getText() + "7"));
+        eight.addActionListener(e -> screen.setText(screen.getText() + "8"));
+        nine.addActionListener(e -> screen.setText(screen.getText() + "9"));
+        division.addActionListener(e -> screen.setText(screen.getText() + "/"));
+        four.addActionListener(e -> screen.setText(screen.getText() + "4"));
+        five.addActionListener(e -> screen.setText(screen.getText() + "5"));
+        six.addActionListener(e -> screen.setText(screen.getText() + "6"));
+        multiplication.addActionListener(e -> screen.setText(screen.getText() + "*"));
+        one.addActionListener(e -> screen.setText(screen.getText() + "1"));
+        two.addActionListener(e -> screen.setText(screen.getText() + "2"));
+        three.addActionListener(e -> screen.setText(screen.getText() + "3"));
+        minus.addActionListener(e -> screen.setText(screen.getText() + "-"));
+        mode.addActionListener(e -> {
+            if(RPN){
+                mode.setText("Norm");
+                RPN = false;
+                screen.setText(toNorm(screen.getText()));
             }
-        });
-        eight.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "8");
-            }
-        });
-        nine.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "9");
-            }
-        });
-        division.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "/");
-            }
-        });
-        four.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "4");
-            }
-        });
-        five.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "5");
-
-            }
-        });
-        six.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "6");
-
-            }
-        });
-        multiplication.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "*");
-            }
-        });
-        one.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "1");
-            }
-        });
-        two.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "2");
-
-            }
-        });
-        three.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "3");
-
-            }
-        });
-        minus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "-");
-            }
-        });
-        mode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(RPN){
-                    mode.setText("Norm");
-                    RPN = false;
-                    screen.setText(toNorm(screen.getText()));
-                }
-                else{
-                    mode.setText("RPN");
-                    RPN = true;
-                    screen.setText(toRPN(screen.getText()));
-                }
+            else{
+                mode.setText("RPN");
+                RPN = true;
+                screen.setText(toRPN(screen.getText()));
             }
         });
 
-        zero.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "0");
+        zero.addActionListener(e -> screen.setText(screen.getText() + "0"));
+        equal.addActionListener(e -> {
+            if (RPN){
+                screen.setText(String.valueOf(solveRPN(screen.getText())));
+            }
+            else {
+                screen.setText(String.valueOf(solveNorm(screen.getText())));
+            }
 
-            }
         });
-        equal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (RPN){
-                    screen.setText(String.valueOf(solveRPN(screen.getText())));
-                }
-                else {
-                    screen.setText(String.valueOf(solveNorm(screen.getText())));
-                }
-
-            }
-        });
-        plus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                screen.setText(screen.getText() + "+");
-            }
-        });
+        plus.addActionListener(e -> screen.setText(screen.getText() + "+"));
     }
     public String toNorm(String espressioneRPN) {
         Stack<String> stack = new Stack<>();
@@ -153,7 +72,7 @@ public class Calcolatrice {
             if (isOperator(token.charAt(0))) {
                 String operand2 = stack.pop();
                 String operand1 = stack.pop();
-                String risultato = "" + operand1 + token + operand2 + "";
+                String risultato = " " + operand1 + token + operand2 + " ";
                 stack.push(risultato);
             } else {
                 stack.push(token);
@@ -227,10 +146,7 @@ public class Calcolatrice {
     private boolean isOperator(char c) {
         return c == '+' || c == '-' || c == '*' || c == '/';
     }
-    private boolean isOperand(String token) {
-        // Check if the token is an operand (number)
-        return token.matches("^-?\\d+(\\.\\d+)?$");
-    }
+
 
     private static int precedence(char operatore) {
         return switch (operatore) {
