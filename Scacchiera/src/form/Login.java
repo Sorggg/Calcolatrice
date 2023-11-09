@@ -9,17 +9,18 @@ import java.util.Objects;
 
 
 public class Login {
-    private JButton submit;
+    private JButton login;
     private JPanel loginPanel;
     private JTextField usernameText;
     private JLabel userNameLabel;
     private JTextField passwordText;
     private JLabel passwordLabel;
+    private JButton register;
     static Connection conn1 = null;
     JFrame jFrame = new JFrame();
 
     public Login() {
-        submit.addActionListener(new ActionListener() {
+        login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 String strSelect = "select * from Users";
@@ -52,6 +53,27 @@ public class Login {
                 }
                 else{
                     JOptionPane.showMessageDialog(jFrame, "Username o password sbagliati");
+                }
+            }
+        });
+        register.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    String username = usernameText.getText();
+                    String password = passwordText.getText();
+                    Statement stmt = conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    if(!Objects.equals(password, "") && !Objects.equals(username, "")){
+                        String query = "insert into Users (Id,Username,Password) values (null,'"+username+"','"+password+"')";
+                        int rs = stmt.executeUpdate(query);
+                        JOptionPane.showMessageDialog(jFrame, "Nuovo utente inserito");
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(jFrame, "Uno dei campi è vuoto");
+                    }
+
+                } catch (Exception exception){
+                    exception.printStackTrace();
                 }
             }
         });
