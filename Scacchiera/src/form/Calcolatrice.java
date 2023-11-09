@@ -1,6 +1,15 @@
 package form;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Stack;
 
 public class Calcolatrice {
@@ -24,6 +33,7 @@ public class Calcolatrice {
     private JButton nine;
     private JTextField screen;
     private JButton history;
+    JFrame jFrame = new JFrame();
 
     public Calcolatrice() {
 
@@ -56,14 +66,72 @@ public class Calcolatrice {
         zero.addActionListener(e -> screen.setText(screen.getText() + "0"));
         equal.addActionListener(e -> {
             if (RPN){
+
+                try{
+                    String expression = toNorm(screen.getText());
+                    String result = String.valueOf(solveRPN(screen.getText()));
+                    Statement stmt = Login.conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    if(!Objects.equals(expression, "") && !Objects.equals(result, "")){
+                        String query = "insert into History (Id,Expression,Result) values ('" + Login.logged + "','" + expression + "','" + result +"')";
+
+                        int rs = stmt.executeUpdate(query);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(jFrame, "Uno dei campi è vuoto");
+                    }
+
+                } catch (Exception exception){
+                    exception.printStackTrace();
+                }
                 screen.setText(String.valueOf(solveRPN(screen.getText())));
             }
             else {
+
+                try{
+                    String expression = screen.getText();
+                    String result = String.valueOf(solveNorm(screen.getText()));
+                    Statement stmt = Login.conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    if(!Objects.equals(expression, "") && !Objects.equals(result, "")){
+                        String query = "insert into History (Id,Expression,Result) values ('" + Login.logged + "','" + expression + "','" + result +"')";
+
+                        int rs = stmt.executeUpdate(query);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(jFrame, "Uno dei campi è vuoto");
+                    }
+
+                } catch (Exception exception){
+                    exception.printStackTrace();
+                }
                 screen.setText(String.valueOf(solveNorm(screen.getText())));
+
             }
 
         });
         plus.addActionListener(e -> screen.setText(screen.getText() + "+"));
+        history.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    //Statement stmt = Login.conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    //ResultSet rs = stmt.executeQuery("SELECT * FROM History WHERE here Id = '" + Login.logged + "')");
+                    String query = "SELECT Expression, Result FROM history WHERE Id = ?";
+                    PreparedStatement stmt = Login.conn1.prepareStatement(query);
+                    stmt.setString(1, String.valueOf(Login.logged));
+                    ResultSet rs = stmt.executeQuery();
+
+                    StringBuilder message = new StringBuilder("History:\n");
+                    while (rs.next()) {
+                        String expression = rs.getString("Expression");
+                        float result = rs.getInt("Result");
+                        message.append(expression).append(" = ").append(result).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(null, message.toString());
+                } catch (Exception exception){
+                    exception.printStackTrace();
+                }
+            }
+        });
     }
     public String toNorm(String espressioneRPN) {
         Stack<String> stack = new Stack<>();
@@ -196,5 +264,6 @@ public class Calcolatrice {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+        System.out.println("Connection failed. Error message: ");
     }
 }

@@ -13,10 +13,11 @@ public class Login {
     private JPanel loginPanel;
     private JTextField usernameText;
     private JLabel userNameLabel;
-    private JTextField passwordText;
     private JLabel passwordLabel;
     private JButton register;
-    static Connection conn1 = null;
+    private JPasswordField passwordText;
+    public static Connection conn1 = null;
+    public static int logged;
     JFrame jFrame = new JFrame();
 
     public Login() {
@@ -33,6 +34,7 @@ public class Login {
                     ResultSet rs = stmt.executeQuery("select * from Users");
                     int i= 0;
 
+
                     while(rs.next()){
                         id.add(rs.getInt("Id"));
                         username.add(rs.getString("Username"));
@@ -44,6 +46,7 @@ public class Login {
                 }
                 if(verifica(usernameText.getText(),passwordText.getText(),id,username,password) > -1){
                     System.out.println(verifica(usernameText.getText(),passwordText.getText(),id,username,password));
+                    logged = verifica(usernameText.getText(),passwordText.getText(),id,username,password);
                     JOptionPane.showMessageDialog(null, "Login effettuato con successo");
                     JFrame frame = new JFrame("Calcolatrice");
                     frame.setContentPane(new Calcolatrice().panel1);
@@ -65,6 +68,7 @@ public class Login {
                     Statement stmt = conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     if(!Objects.equals(password, "") && !Objects.equals(username, "")){
                         String query = "insert into Users (Id,Username,Password) values (null,'"+username+"','"+password+"')";
+
                         int rs = stmt.executeUpdate(query);
                         JOptionPane.showMessageDialog(jFrame, "Nuovo utente inserito");
                     }
