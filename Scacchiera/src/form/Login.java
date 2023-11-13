@@ -29,24 +29,27 @@ public class Login {
                 ArrayList<Integer> id = new ArrayList<>();
                 ArrayList<String> username = new ArrayList<>();
                 ArrayList<String> password = new ArrayList<>();
+                int ris = -1;
                 try{
                     Statement stmt = conn1.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     ResultSet rs = stmt.executeQuery("select * from Users");
-                    int i= 0;
 
+                    boolean trovato = false;
 
-                    while(rs.next()){
-                        id.add(rs.getInt("Id"));
-                        username.add(rs.getString("Username"));
-                        password.add(rs.getString("Password"));
-                        i++;
+                    while(rs.next() && trovato == false){
+
+                        if(Objects.equals(rs.getString("Username"), usernameText.getText())&&Objects.equals(passwordText.getText(), rs.getString("Password"))){
+                            trovato = true;
+                            ris = rs.getInt("Id");
+                        }
+
                     }
                 } catch (Exception e){
                     e.printStackTrace();
                 }
-                if(verifica(usernameText.getText(),passwordText.getText(),id,username,password) > -1){
-                    System.out.println(verifica(usernameText.getText(),passwordText.getText(),id,username,password));
-                    logged = verifica(usernameText.getText(),passwordText.getText(),id,username,password);
+                System.out.println(ris);
+                if(ris > -1){
+                    logged = ris;
                     JOptionPane.showMessageDialog(null, "Login effettuato con successo");
                     JFrame frame = new JFrame("Calcolatrice");
                     frame.setContentPane(new Calcolatrice().panel1);
@@ -81,19 +84,6 @@ public class Login {
                 }
             }
         });
-    }
-    public int verifica(String u,String p,ArrayList<Integer> Id,ArrayList<String> Username,ArrayList<String>Password){
-        boolean found = false;
-        int ris = -1;
-        int i = 0;
-        while (!found && i < Id.size()){
-            if(Objects.equals(Username.get(i), u) && Objects.equals(Password.get(i), p)){
-                found = true;
-                ris = Id.get(i);
-            }
-            i++;
-        }
-        return ris;
     }
 
     public static void main(String[] args) {
